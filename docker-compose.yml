@@ -1,0 +1,60 @@
+version: '3.7'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_LISTENERS: INTERNAL://:9092,EXTERNAL://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  flask:
+    build:
+      context: ./flask
+      dockerfile: dockerfile
+    container_name: flask
+    hostname: flask
+    ports:
+      - "5002:5002"
+    depends_on:
+      - kafka
+  line:
+    build:
+      context: ./line
+      dockerfile: dockerfile
+    container_name: line
+    hostname: line
+    ports:
+      - "5000:5000"
+    depends_on:
+      - kafka
+
+  ngrok:
+    image: wernight/ngrok
+    container_name: chatbot_ngrok
+    tty: true
+    stdin_open: true
+    ports:
+      - "4040"
+    depends_on:
+      - line
+    command: ngrok http line:5000
+
+

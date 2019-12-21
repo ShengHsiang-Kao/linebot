@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Card Recommendation Assisstant</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <style type="text/css">
+      .wrapper {
+        min-width:500px;
+        padding: 0 15px;
+      }
+      .navigation {
+        position:fixed;
+      }
+      .content {
+        background-color:#fff;
+      }
+       #himg img {
+       /* margin: 10px auto;*/
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+      }
+      div.card{font-family: 'Ma Shan Zheng', cursive;
+      }
+      p.card{font-family: 'Ma Shan Zheng', cursive;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="row">
+        <!-- col-md-2 navigation -->
+        <div class="navbar col-md-2 left flex-column bg-info text-white text-center ">
+        <div class="container">
+          <div id="himg" class=" text-center mt-5 mb-3">
+            <img src="https://svgsilh.com/svg/150175.svg" class="img-fluid">
+          </div>
+          <h3 class="navbar-brand">推薦系統</h3>
+          <a class="nav-link" href="https://www.cardu.com.tw/rank/click.php" target="_blank">熱門卡片</a>
+        </div>
+      </div>
+        <!-- /col-md-2 navigation -->
+
+      <div class="col-md-10 content">
+        <!-- Card contents -->
+
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+
+
+            </div>
+
+
+          </div>
+        </div>
+
+        <!-- /Card contents -->
+
+        <!-- Recommend Card -->
+        <h1  class="display-4 mt-3 ml-3 text-muted">Recommended Card</h1>
+        <div class="container mt-3">
+            <div class="col-md-10 col-lg-10 mb-3">
+                <div class="card">
+                <img src="/static/{{card1['卡名02']}}.png" width="150" height="100">
+                {% for key,value in card1.items() %}
+                    {% if fey !="銀行" and key !="卡名02" and value != None %}
+                        <p>{{key}}:{{value}}</p>
+                    {% endif%}
+                {% endfor%}
+                </div>
+            </div>
+
+            <div class="col-md-10 col-lg-10 mb-3">
+                <div class="card">
+                    <img src="/static/{{card2['卡名02']}}.png" width="150" height="100">
+                    {% for key,value in card2.items() %}
+                        {% if fey !="銀行" and key !="卡名02" and value != None %}
+                            <p>{{key}}:{{value}}</p>
+                        {% endif%}
+                    {% endfor%}
+                </div>
+            </div>
+
+            <div class="col-md-10 col-lg-10 mb-3">
+                <div class="card">
+                    <img src="/static/{{card3['卡名02']}}.png" width="150" height="100">
+                    {% for key,value in card3.items() %}
+                        {% if fey !="銀行" and key !="卡名02" and value != None %}
+                            <p>{{key}}:{{value}}</p>
+                        {% endif%}
+                    {% endfor%}
+                </div>
+            </div>
+
+            <div class="col-md-10 col-lg-10 mb-3">
+                <div class="card">
+                    <img src="/static/{{card4['卡名02']}}.png" width="150" height="100">
+                    {% for key,value in card4.items() %}
+                        {% if fey !="銀行" and key !="卡名02" and value != None %}
+                            <p>{{key}}:{{value}}</p>
+                        {% endif%}
+                    {% endfor%}
+                </div>
+            </div>
+
+            <div class="col-md-10 col-lg-10 mb-3">
+                <div class="card">
+                    <img src="/static/{{card5['卡名02']}}.png" width="150" height="100">
+                    {% for key,value in card5.items() %}
+                        {% if fey !="銀行" and key !="卡名02" and value != None %}
+                            <p>{{key}}:{{value}}</p>
+                        {% endif%}
+                    {% endfor%}
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+
+      </div>
+    </div>
+
+
+
+
+
+          </div>
+          <!-- footer -->
+          <div class="ml-3 col-6 ">
+              <small>&copy; 2019 Made with 8D慶</small>
+          </div>
+          <!-- /footer -->
+
+
+
+
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+</html>

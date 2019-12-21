@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for i in bankset %}
+    <a>{{i}}</a>
+    {% for x in range(306) %}
+        {% if i == bank[x] %}
+            <a>{{bank[x]}}---{{card[x]}}</a>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+</body>
+</html>
