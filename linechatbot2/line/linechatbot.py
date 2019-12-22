@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from gensim.models.keyedvectors import KeyedVectors
 import jieba
-from gensim.test.utils import datapath
 # 引用Web Server套件
 from flask import Flask, request, abort
 # 從linebot 套件包裡引用 LineBotApi 與 WebhookHandler 類別
@@ -14,11 +13,11 @@ from linebot import (
 from linebot.exceptions import (
     InvalidSignatureError, LineBotApiError
 )
-# 載入json處理套件
+from geopy.distance import geodesic
+import pandas as pd
 import json
-# 將消息模型，文字收取消息與文字寄發消息 引入
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, StickerSendMessage, TemplateSendMessage
+    MessageEvent, TextMessage, LocationMessage, TextSendMessage, ImageSendMessage, StickerSendMessage, TemplateSendMessage, PostbackEvent, ImagemapSendMessage,
 )
 
 #引入按鍵模板
@@ -26,7 +25,7 @@ from linebot.models.template import(
     ButtonsTemplate
 )
 # 載入基礎設定檔
-secretFileContentJson=json.load(open("./line_secret_key",'r',encoding="utf-8"))
+secretFileContentJson=json.load(open("/line_secret_key",'r',encoding="utf-8"))
 server_url=secretFileContentJson.get("server_url")
 
 # 設定Server啟用細節
@@ -104,7 +103,6 @@ def managePredict(event, mtext):  #處理LIFF傳回的FORM資料
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！'))
 
-
 # 0.撈出存在excel的向量轉為matrix
 def get_article_matrix(article, i):
     aa = article.loc[:, ["article_vector_matrix"]][i:i + 1]
@@ -116,16 +114,13 @@ def get_article_matrix(article, i):
     article_matrix = np.mat(c).astype(float)
     return (article_matrix)
 
-
 # 1.載入檔案
-article = pd.read_excel(r"./article_news_vector _final.xlsx")
-articles_matrix = [get_article_matrix(article, i) for i in range(5000)]
+article = pd.read_excel(r"/app/article_news_vector _final.xlsx")
+articles_matrix = [get_article_matrix(article, i) for i in range(5594)]
 
 # 2.載入bin檔
 wv_from_bin = KeyedVectors.load_word2vec_format(
-    datapath(r'./100win20min_count3cbow1.bin'),
-    binary=True)
-
+    r'/app/100win20min_count3cbow1.bin',binary=True)
 
 # 3.輸入文字
 def please_input_words(rlist):
@@ -138,14 +133,12 @@ def please_input_words(rlist):
     print(input_vector_matrix)
     return (input_vector_matrix)
 
-
 # 4.獲取輸入詞的平均向量
 def get_article_avgvector(wordlist):
     # 取每篇文章平均向量
     # x=np.matrix(wv_from_bin[word])安安?
     len_wordlist = 0
     input_avgvector_matrix = 0
-
     for word in wordlist:
         try:
             x = np.matrix(wv_from_bin[word])
@@ -160,7 +153,6 @@ def get_article_avgvector(wordlist):
         input_avgvector_matrix = input_avgvector_matrix / len_wordlist
 
     return (input_avgvector_matrix)
-
 
 # 5.餘弦相似度
 def cos_similar(vector_a, vector_b):
@@ -178,7 +170,6 @@ def cos_similar(vector_a, vector_b):
     similar = 0.5 + 0.5 * cos
     return similar
 
-
 # 測試開始_餘弦相似度
 def manageRecommend(event, mtext):
     rlist = mtext[1:]
@@ -193,9 +184,7 @@ def manageRecommend(event, mtext):
     except:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！'))
 
-    # 比對
-
-
+# 比對
 def 餘弦相似度找文章(rlist, input_vector_matrix):
     articles_matrix_list = []
     for b in range(5000):
@@ -207,6 +196,46 @@ def 餘弦相似度找文章(rlist, input_vector_matrix):
     print("文章內文為:", "\n", "\n", "------------------------------------------------------------", "\n",
           np.array(article[most_similar:most_similar + 1]['content'])[0])
     return most_similar_article
+
+df_store_list=pd.read_excel(r'/app/store_location.xlsx',encoding='utf-16',index_col=0)
+def manageLocation(event, latitude, longitude):
+    lat = latitude
+    lng = longitude
+    neardf = near_by_info(lat,lng)
+    text_1 = neardf
+    try:
+        message = TextSendMessage(  #顯示資料
+            text = text_1
+        )
+        line_bot_api.reply_message(event.reply_token, message)
+    except:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！'))
+def near_by_info(lat,lng):
+    store=[]
+    addr=[]
+    info=[]
+    distance=[]
+    for i in range(len(df_store_list)):
+        address=(df_store_list['lat'][i],df_store_list['lng'][i])
+        #計算當下位置與商家位置距離
+        dist=geodesic(address,(lat,lng)).kilometers
+        #若小於3公里
+        if dist<3:
+            if len(store)<5:
+                store.append(df_store_list['store'][i])
+                if df_store_list['store'][i]=='屈臣氏':
+                    info.append('刷LINEPay卡5%回饋')
+                elif df_store_list['store'][i]=='美廉社':
+                    info.append('刷LINEPay卡2%回饋')
+                addr.append(df_store_list['address'][i])
+                distance.append(str(round(dist,2))+'km')
+    neardf = pd.DataFrame({'店家':store,'優惠內容':info,'地址':addr,'距離':distance},columns=['店家','優惠內容','地址','距離'])
+    if len(neardf)==0:
+        neardf = '附近沒有優惠店家'
+        return neardf
+    else:
+        neardf=str(neardf)
+        return neardf
 
 # 消息清單
 reply_message_list = [
@@ -240,6 +269,43 @@ TextSendMessage(text="想知道您的核卡額度？🤔輸入下列訊息，我
 # 新聞推薦流程
 reply_message_list_news = [
 TextSendMessage(text="您想知道哪一類的信用卡相關資訊呢？點選下方按鈕或是輸入@加上您感興趣的內容，例如:@我想知道2020最強神卡，我們就會提供相關訊息給您🙂"),
+ImagemapSendMessage(
+    base_url='https://%s/images/news'%server_url,
+    alt_text='新聞推薦',
+    base_size=BaseSize(height=1686, width=2500),
+    actions=[
+        MessageImagemapAction(
+            text='#旅遊優惠新聞',
+            area=ImagemapArea(
+                x=178, y=71, width=986, height=407
+            )
+        ),
+        MessageImagemapAction(
+            text='#行動支付新聞',
+            area=ImagemapArea(
+                x=768, y=619, width=970, height=414
+            )
+        ),
+        MessageImagemapAction(
+            text='#交通加油新聞',
+            area=ImagemapArea(
+                x=183, y=1152, width=970, height=440
+            )
+        ),
+        MessageImagemapAction(
+            text='#促銷活動新聞',
+            area=ImagemapArea(
+                x=1327, y=47, width=999, height=416
+            )
+        ),
+        MessageImagemapAction(
+            text='#繳費繳稅新聞',
+            area=ImagemapArea(
+                x=1330, y=1140, width=966, height=436
+            )
+        )
+    ]
+)
 ]
 
 # 卡片推薦流程
@@ -255,12 +321,12 @@ TextSendMessage(text="不知道哪張信用卡適合自己嗎？😥讓我們來
       {
         "type": "uri",
         "label": "已持有信用卡",
-        "uri": "18.192.172.180:5002/card"
+        "uri": "https://.ngrok.io"
       },
       {
         "type": "uri",
         "label": "初次辦卡小白",
-        "uri": "18.192.172.180:5002"
+        "uri": "https://.ngrok.io"
       }
     ],
   )
@@ -285,7 +351,8 @@ template_message_dict = {
 
 當用戶發出文字消息時，判斷文字內容是否包含[::text:]，
     若有，則從template_message_dict 內找出相關訊息
-    若無，則回傳預設訊息。
+當用戶發出文字消息含有###時，進入額度預測功能
+當用戶發出文字消息含有@時，進入新聞推薦功能
 
 '''
 
@@ -302,7 +369,65 @@ def handle_message(event):
         managePredict(event, event.message.text)
     elif event.message.text.find('@')!= -1 and len(event.message.text) > 2:
         manageRecommend(event, event.message.text)
+    elif event.message.text == "#旅遊優惠新聞":
+        article = pd.read_excel(r"/app/article_news_vector _final_30.xlsx")
+        text_1 = str(np.array(article[article['label']==29]['content'])[0])
+        try:
+            message = TextSendMessage(  #顯示資料
+                text = text_1
+            )
+            line_bot_api.reply_message(event.reply_token, message)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！'))
+    elif event.message.text == "#行動支付新聞":
+        article = pd.read_excel(r"/app/article_news_vector _final_30.xlsx")
+        text_1 = str(np.array(article[article['label']==13]['content'])[0])
+        try:
+            message = TextSendMessage(  #顯示資料
+                text = text_1
+            )
+            line_bot_api.reply_message(event.reply_token, message)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！'))
+    elif event.message.text == "#交通加油新聞":
+        article = pd.read_excel(r"/app/article_news_vector _final_30.xlsx")
+        text_1 = str(np.array(article[article['label']==23]['content'])[0])
+        try:
+            message = TextSendMessage(  #顯示資料
+                text = text_1
+            )
+            line_bot_api.reply_message(event.reply_token, message)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！'))
+    elif event.message.text == "#促銷活動新聞":
+        article = pd.read_excel(r"/app/article_news_vector _final_30.xlsx")
+        text_1 = str(np.array(article[article['label']==0]['content'])[0])
+        try:
+            message = TextSendMessage(  #顯示資料
+                text = text_1
+            )
+            line_bot_api.reply_message(event.reply_token, message)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！'))
+    elif event.message.text == "#繳費繳稅新聞":
+        article = pd.read_excel(r"/app/article_news_vector _final_30.xlsx")
+        text_1 = str(np.array(article[article['label']==26]['content'])[0])
+        try:
+            message = TextSendMessage(  #顯示資料
+                text = text_1
+            )
+            line_bot_api.reply_message(event.reply_token, message)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='發生錯誤！'))
 
+# #用戶傳送地理位置後，取其經緯度
+@handler.add(MessageEvent, message=LocationMessage)
+def handle_post_message(event):
+    latitude=event.message.latitude
+    longitude=event.message.longitude
+    manageLocation(event, latitude, longitude)
+#     print(event.message.latitude)
+#     print(event.message.longitude)
 
 '''
 
@@ -318,10 +443,6 @@ from linebot.models.events import (
     FollowEvent
 )
 
-# 載入requests套件
-import requests
-
-
 # 告知handler，如果收到FollowEvent，則做下面的方法處理
 @handler.add(FollowEvent)
 def reply_text_and_get_user_profile(event):
@@ -329,7 +450,7 @@ def reply_text_and_get_user_profile(event):
     user_profile = line_bot_api.get_profile(event.source.user_id)
 
     # 將用戶資訊存在檔案內
-    with open("./users.txt", "a") as myfile:
+    with open("/app/users.txt", "a") as myfile:
         myfile.write(json.dumps(vars(user_profile), sort_keys=True))
         myfile.write('\r\n')
 

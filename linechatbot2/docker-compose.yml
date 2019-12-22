@@ -9,20 +9,18 @@ services:
 
   kafka:
     image: wurstmeister/kafka:latest
-    container_name: kafka
-    hostname: kafka
     ports:
-      - "9092:9092"
-      - "9093:9093"
-    depends_on:
-      - zookeeper
+      - target: 9094
+        published: 9094
+        protocol: tcp
+        mode: host
     environment:
+      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_HOST_NAME: localhost
-      KAFKA_LISTENERS: INTERNAL://:9092,EXTERNAL://:9093
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://_{HOSTNAME_COMMAND}:9094
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   flask:
@@ -52,9 +50,18 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - "4040"
+      - "54089:4040"
     depends_on:
       - line
     command: ngrok http line:5000
 
-
+  ngrok1:
+    image: wernight/ngrok
+    container_name: flask_ngrok
+    tty: true
+    stdin_open: true
+    ports:
+      - "54088:4040"
+    depends_on:
+      - line
+    command: ngrok http flask:5002

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta http-equiv="refresh" content="3;url=/result/{{ id }}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+<style>
+    .cssload-wrap {
+	width: 180px;
+	height: 180px;
+	margin: 90px auto;
+	position: relative;
+	perspective: 3600px;
+		-o-perspective: 3600px;
+		-ms-perspective: 3600px;
+		-webkit-perspective: 3600px;
+		-moz-perspective: 3600px;
+	transform-style: preserve-3d;
+		-o-transform-style: preserve-3d;
+		-ms-transform-style: preserve-3d;
+		-webkit-transform-style: preserve-3d;
+		-moz-transform-style: preserve-3d;
+}
+
+.cssload-circle {
+	transform-style: preserve-3d;
+		-o-transform-style: preserve-3d;
+		-ms-transform-style: preserve-3d;
+		-webkit-transform-style: preserve-3d;
+		-moz-transform-style: preserve-3d;
+	box-sizing: border-box;
+		-o-box-sizing: border-box;
+		-ms-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+	opacity: 0;
+	width: 180px;
+	height: 180px;
+	border: 2px solid rgba(0,0,0,0.8);
+	border-radius: 135px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	animation: cssload-spin 13.5s ease-in-out alternate infinite;
+		-o-animation: cssload-spin 13.5s ease-in-out alternate infinite;
+		-ms-animation: cssload-spin 13.5s ease-in-out alternate infinite;
+		-webkit-animation: cssload-spin 13.5s ease-in-out alternate infinite;
+		-moz-animation: cssload-spin 13.5s ease-in-out alternate infinite;
+}
+.cssload-circle:nth-of-type(1) {
+	animation-delay: 225ms;
+		-o-animation-delay: 225ms;
+		-ms-animation-delay: 225ms;
+		-webkit-animation-delay: 225ms;
+		-moz-animation-delay: 225ms;
+}
+.cssload-circle:nth-of-type(2) {
+	animation-delay: 450ms;
+		-o-animation-delay: 450ms;
+		-ms-animation-delay: 450ms;
+		-webkit-animation-delay: 450ms;
+		-moz-animation-delay: 450ms;
+}
+.cssload-circle:nth-of-type(3) {
+	animation-delay: 675ms;
+		-o-animation-delay: 675ms;
+		-ms-animation-delay: 675ms;
+		-webkit-animation-delay: 675ms;
+		-moz-animation-delay: 675ms;
+}
+.cssload-circle:nth-of-type(4) {
+	animation-delay: 900ms;
+		-o-animation-delay: 900ms;
+		-ms-animation-delay: 900ms;
+		-webkit-animation-delay: 900ms;
+		-moz-animation-delay: 900ms;
+}
+.cssload-circle:nth-of-type(5) {
+	animation-delay: 1125ms;
+		-o-animation-delay: 1125ms;
+		-ms-animation-delay: 1125ms;
+		-webkit-animation-delay: 1125ms;
+		-moz-animation-delay: 1125ms;
+}
+
+
+
+@keyframes cssload-spin {
+	0% {
+		transform: rotateY(0deg) rotateX(0deg);
+		opacity: 1;
+	}
+	25% {
+		transform: rotateY(180deg) rotateX(360deg);
+	}
+	50% {
+		transform: rotateY(540deg) rotateX(540deg);
+	}
+	75% {
+		transform: rotateY(720deg) rotateX(900deg);
+	}
+	100% {
+		transform: rotateY(900deg) rotateX(1080deg);
+		opacity: 1;
+	}
+}
+
+@-o-keyframes cssload-spin {
+	0% {
+		-o-transform: rotateY(0deg) rotateX(0deg);
+		opacity: 1;
+	}
+	25% {
+		-o-transform: rotateY(180deg) rotateX(360deg);
+	}
+	50% {
+		-o-transform: rotateY(540deg) rotateX(540deg);
+	}
+	75% {
+		-o-transform: rotateY(720deg) rotateX(900deg);
+	}
+	100% {
+		-o-transform: rotateY(900deg) rotateX(1080deg);
+		opacity: 1;
+	}
+}
+
+@-ms-keyframes cssload-spin {
+	0% {
+		-ms-transform: rotateY(0deg) rotateX(0deg);
+		opacity: 1;
+	}
+	25% {
+		-ms-transform: rotateY(180deg) rotateX(360deg);
+	}
+	50% {
+		-ms-transform: rotateY(540deg) rotateX(540deg);
+	}
+	75% {
+		-ms-transform: rotateY(720deg) rotateX(900deg);
+	}
+	100% {
+		-ms-transform: rotateY(900deg) rotateX(1080deg);
+		opacity: 1;
+	}
+}
+
+@-webkit-keyframes cssload-spin {
+	0% {
+		-webkit-transform: rotateY(0deg) rotateX(0deg);
+		opacity: 1;
+	}
+	25% {
+		-webkit-transform: rotateY(180deg) rotateX(360deg);
+	}
+	50% {
+		-webkit-transform: rotateY(540deg) rotateX(540deg);
+	}
+	75% {
+		-webkit-transform: rotateY(720deg) rotateX(900deg);
+	}
+	100% {
+		-webkit-transform: rotateY(900deg) rotateX(1080deg);
+		opacity: 1;
+	}
+}
+
+@-moz-keyframes cssload-spin {
+	0% {
+		-moz-transform: rotateY(0deg) rotateX(0deg);
+		opacity: 1;
+	}
+	25% {
+		-moz-transform: rotateY(180deg) rotateX(360deg);
+	}
+	50% {
+		-moz-transform: rotateY(540deg) rotateX(540deg);
+	}
+	75% {
+		-moz-transform: rotateY(720deg) rotateX(900deg);
+	}
+	100% {
+		-moz-transform: rotateY(900deg) rotateX(1080deg);
+		opacity: 1;
+	}
+}
+</style>
+</head>
+<body>
+<div class="cssload-wrap">
+	<div class="cssload-circle"></div>
+	<div class="cssload-circle"></div>
+	<div class="cssload-circle"></div>
+	<div class="cssload-circle"></div>
+	<div class="cssload-circle"></div>
+</div>
+</body>
+</html>
