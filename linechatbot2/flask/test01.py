@@ -24,6 +24,18 @@ def index():
         resp.set_cookie('id', uid, max_age=99999)
         id = request.cookies.get('id')
         return resp
+        
+        
+@app.route('/ii')
+def test_html():
+        return render_template('ii.html')
+        
+@app.route('/kibana')
+def kibana():
+        return render_template('kibana.html')
+        
+        
+        
 @app.route('/card')
 def yocard():
     if 'id' in request.cookies:
@@ -66,6 +78,7 @@ def yocard():
         id = request.cookies.get('id')
         return resp
 
+
 @app.route('/havecard', methods=['POST'])
 def havecard():
     if request.method == 'POST':
@@ -105,7 +118,7 @@ def nocard():
         producer.produce(topicName,usrdict,'test')
         producer.flush()
         return render_template('wating.html',id=id)
-
+    
 @app.route('/result/<id>')
 def result(id):
     if 'id' in request.cookies:
@@ -132,6 +145,7 @@ def result(id):
         del card5["_id"];del card5["熱度排名"]
         client.close()
         return render_template('result.html',id=id,card1=card1,card2=card2,card3=card3,card4=card4,card5=card5)
+
 
 
 if __name__ == "__main__":
