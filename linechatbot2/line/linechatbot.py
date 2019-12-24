@@ -327,6 +327,11 @@ TextSendMessage(text="不知道哪張信用卡適合自己嗎？😥讓我們來
         "type": "uri",
         "label": "初次辦卡小白",
         "uri": "https://.ngrok.io"
+      },
+      {
+        "type": "uri",
+        "label": "已持有信用卡",
+        "uri": "https://.ngrok.io"
       }
     ],
   )

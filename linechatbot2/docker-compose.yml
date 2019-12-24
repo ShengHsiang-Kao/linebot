@@ -87,36 +87,7 @@ services:
       - ./esdata:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
-
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash-oss:7.2.0
-    command: -f /usr/share/logstash/pipeline/logstash-logspout.conf
-    container_name: logstash
-    hostname: logstash
-    restart: always
-    volumes:
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-    ports:
-      - "127.0.0.1:5000:5000/udp"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    depends_on:
-      - elasticsearch
-
-  logspout:
-    image: bekt/logspout-logstash
-    container_name: logspout
-    hostname: logspout
-    restart: always
-    environment:
-      ROUTE_URIS: logstash+tcp://logstash:5000
-    depends_on:
-      - logstash
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
+  
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:7.2.0
     container_name: kibana
