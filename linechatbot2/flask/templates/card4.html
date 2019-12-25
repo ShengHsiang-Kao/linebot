@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>有卡推薦</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link href="https://cdn.bootcss.com/bootstrap-select/1.12.1/css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+    <style type="text/css">
+      .wrapper {
+        min-width:500px;
+        padding: 0 15px;
+      }
+      .navigation {
+        position:fixed;
+      }
+      .content {
+        background-color:#fff;
+      }
+       #himg img {
+       /* margin: 10px auto;*/
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="row">
+        <!-- col-md-2 navigation -->
+        <div class="navbar col-md-2 left flex-column bg-info text-white text-center ">
+        <div class="container">
+          <div id="himg" class=" text-center mt-2 mb-2">
+            <img src="https://svgsilh.com/svg/150175.svg" class="img-fluid">
+            <h1  class="display-4 mt-3 ml-3 text-muted">推薦系統</h1>
+          </div>
+          <h3 class="navbar-brand"></h3>
+          <a class="nav-link" href="https://www.cardu.com.tw/rank/click.php" target="_blank">熱門卡片</a>
+        </div>
+      </div>
+        <!-- /col-md-2 navigation -->
+
+      <div class="col-md-10 content">
+        <!-- Movie contents -->
+        <h1  class="display-4 mt-3 ml-3 text-muted"></h1>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <div>
+
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+        <!-- /Movie contents -->
+
+        <!-- Recommend Movie -->
+        <h1  class="display-3 mt-3 ml-3 text-muted">有卡推薦</h1>
+
+          <div class="form-group">
+              <label class="col-lg-1 control-label"><h2>選擇你有的信用卡：</h2></label>
+
+            <div class="col-lg-6">
+            <form method="post" action="/havecard">
+            <input type="submit" name="sendBtn" value="Submit" >
+            <p><select id="card" name= "cardname" class="selectpicker "  data-live-search="true" multiple="multiple" data-max-options="10">
+                {% for i in bankset %}
+                    <optgroup label={{i}}>
+                    {% for x in range(bank | length) %}
+                        {% if i == bank[x] %}
+                            <option data-subtext={{bank[x]}} value={{result[x]}} name={{card[x]}}>{{card[x]}}</option>
+                        {% endif %}
+                    {% endfor %}
+                 {% endfor %}
+
+            </select>
+
+            </form>
+        </div>
+
+
+    </div>
+
+
+
+       </div>
+          <!-- footer -->
+            <div class="ml-3 col-6 ">
+              <small>&copy; 2019 Made with 8D慶</small>
+            </div>
+          <!-- /footer -->
+
+<script>
+    // 获取值
+    function getVal() {
+        console.log($('#fruits').val());
+        $('#fruits').selectpicker('val', arr);
+    }
+    out.write(”<h3>selected values : <h3>”);
+String[] selected = request.getParameterValues(”value”);
+if(selected != null){
+    for(int i=0; i<selected.length; i++){
+        out.write(”<p>” + selected[i] + “<p>”);
+    }
+}else{
+    out.write(”<p> No value selected <p>”);
+}
+
+    // 回显操作
+    // var str = '3,4,5,6';
+    // var arr = str.split(',');
+    // $('#fruits').selectpicker('val', arr);
+
+$('.selectpicker').selectpicker({
+            'selectedText':'cat',
+            'dropupAuto':false
+         })
+$(document).ready(function() {
+$('.js-example-basic-multiple').select2();
+});
+
+$('.selectpicker show-menu-arrow form-control').selectpicker({
+                'selectedText':'cat',
+                 'noneSelectedText':'请选择',
+                 'deselectAllText':'全不选',
+                 'selectAllText': '全选',
+             })
+</script>
+
+
+
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+</html>

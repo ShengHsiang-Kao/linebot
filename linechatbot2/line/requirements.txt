@@ -1,0 +1,12 @@
+h5py==2.10.0
+keras==2.3.0
+tensorflow==1.13.1
+pandas==0.25.1
+line-bot-sdk==1.15.0
+XlsxWriter==1.2.2
+jieba==0.39
+Flask==1.1.1
+gensim==3.8.1
+numpy==1.17.3
+xlrd==1.2.0
+geopy==1.20.0
