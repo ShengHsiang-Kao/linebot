@@ -1,0 +1,142 @@
+version: '3.7'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    deploy:
+      placement:
+        constraints: [node.labels.master == true ]
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - target: 9094
+        published: 9094
+        protocol: tcp
+        mode: host
+    environment:
+      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://_{HOSTNAME_COMMAND}:9094
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 2
+  flask:
+    image: simp24118/flask
+    container_name: flask
+    hostname: flask
+    ports:
+      - "5002:5002"
+    depends_on:
+      - kafka
+    deploy:
+      placement:
+        constraints: [node.labels.master == true ]
+  line:
+    image: 
+    container_name: line
+    hostname: line
+    ports:
+      - "5000:5000"
+    depends_on:
+      - kafka
+    deploy:
+      placement:
+        constraints: [node.labels.master == true ]
+  ngrok:
+    image: wernight/ngrok
+    container_name: line_ngrok
+    tty: true
+    stdin_open: true
+    ports:
+      - target: 4040
+        published: 54089
+        protocol: tcp
+        mode: host
+    depends_on:
+      - flask
+    deploy:
+      placement:
+        constraints: [node.labels.master == true ]        
+  ngrok1:
+    image: wernight/ngrok
+    container_name: flask_ngrok
+    tty: true
+    stdin_open: true
+    ports:
+      - target: 4040
+        published: 54088
+        protocol: tcp
+        mode: host
+    depends_on:
+      - flask
+    deploy:
+      placement:
+        constraints: [node.labels.master == true ]
+    command: ngrok http flask:5002
+  spark-master:
+    image: simp24118/master-spark
+    container_name: spark-master
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
+    deploy:
+      placement:
+        constraints: [node.labels.master == true ]
+  spark-worker-1:
+    image: simp24118/worker-spark
+    container_name: spark-worker-1
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"
+    environment:
+      - "SPARK_MASTER=spark://spark-master:7077"
+    deploy:
+      replicas: 2
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.2.0
+    container_name: elasticsearch
+    hostname: elasticsearch
+    restart: unless-stopped
+    environment:
+      - cluster.name=docker-cluster
+      - node.name=node1
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms384m -Xmx384m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch2"
+      - "cluster.initial_master_nodes=node1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./esdata:/usr/share/elasticsearch/data
+    deploy:
+      placement:
+        constraints: [node.labels.master == true ]
+    ports:
+      - 9200:9200
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:7.2.0
+    container_name: kibana
+    hostname: kibana
+    environment:
+      SERVER_NAME: kibana_server
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200.3
+    deploy:
+      placement:
+        constraints: [node.labels.master == true ]
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601    
